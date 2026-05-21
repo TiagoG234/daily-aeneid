@@ -1,7 +1,10 @@
-name: Daily Aeneid Email (disabled — use daily_latin.yml)
+name: Daily Latin Email
 
 on:
-  workflow_dispatch:  # kept for reference; schedule removed
+  schedule:
+    # Every day except Wednesday (rest day). Adjust timezone offset if needed.
+    - cron: '0 8 * * 0,1,2,4,5,6'
+  workflow_dispatch:  # manual trigger from GitHub Actions UI
 
 jobs:
   send-email:
@@ -20,10 +23,11 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Send Aeneid email
+      - name: Send daily Latin email
         env:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
-        run: python aeneid_email.py
+          LATIN_TEXT: ${{ secrets.LATIN_TEXT }}
+        run: python daily_latin.py
